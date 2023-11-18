@@ -4,68 +4,32 @@ from google.cloud import storage
 
 
 def upload_blob(bucket_name, source_file_name, destination_blob_name):
-    """Uploads a file to the bucket."""
-    # The ID of your GCS bucket
-    # bucket_name = "your-bucket-name"
-    # The path to your file to upload
-    # source_file_name = "local/path/to/file"
-    # The ID of your GCS object
-    # destination_blob_name = "storage-object-name"
-
     storage_client = storage.Client()
     bucket = storage_client.bucket(bucket_name)
     blob = bucket.blob(destination_blob_name)
 
-    # Optional: set a generation-match precondition to avoid potential race conditions
-    # and data corruptions. The request to upload is aborted if the object's
-    # generation number does not match your precondition. For a destination
-    # object that does not yet exist, set the if_generation_match precondition to 0.
-    # If the destination object already exists in your bucket, set instead a
-    # generation-match precondition using its generation number.
-    generation_match_precondition = 0
-
-    blob.upload_from_filename(source_file_name, if_generation_match=generation_match_precondition)
+    blob.upload_from_filename(source_file_name)
 
     print(
         f"File {source_file_name} uploaded to {destination_blob_name}."
     )
 
-def transcribe_file_with_word_time_offsets(
-    speech_file: str,
-) -> speech.RecognizeResponse:
-    """Transcribe the given audio file synchronously and output the word time
-    offsets."""
+def download_blob(bucket_name, source_blob_name, destination_file_name):
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(bucket_name)
 
-    client = speech.SpeechClient()
+    # Construct a client side representation of a blob.
+    # Note `Bucket.blob` differs from `Bucket.get_blob` as it doesn't retrieve
+    # any content from Google Cloud Storage. As we don't need additional data,
+    # using `Bucket.blob` is preferred here.
+    blob = bucket.blob(source_blob_name)
+    blob.download_to_filename(destination_file_name)
 
-    with open(speech_file, "rb") as audio_file:
-        content = audio_file.read()
-
-    audio = speech.RecognitionAudio(content=content)
-    config = speech.RecognitionConfig(
-        encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
-        sample_rate_hertz=16000,
-        language_code="en-US",
-        enable_word_time_offsets=True,
+    print(
+        "Downloaded storage object {} from bucket {} to local file {}.".format(
+            source_blob_name, bucket_name, destination_file_name
+        )
     )
-
-    response = client.recognize(config=config, audio=audio)
-
-    for result in response.results:
-        alternative = result.alternatives[0]
-        print(f"Transcript: {alternative.transcript}")
-
-        for word_info in alternative.words:
-            word = word_info.word
-            start_time = word_info.start_time
-            end_time = word_info.end_time
-
-            print(
-                f"Word: {word}, start_time: {start_time.total_seconds()}, end_time: {end_time.total_seconds()}"
-            )
-
-    return response
-
 
 # [START speech_transcribe_async_word_time_offsets_gcs]
 def transcribe_gcs_with_word_time_offsets(
@@ -79,7 +43,7 @@ def transcribe_gcs_with_word_time_offsets(
 
     audio = speech.RecognitionAudio(uri=gcs_uri)
     config = speech.RecognitionConfig(
-        encoding=speech.RecognitionConfig.AudioEncoding.FLAC,
+        encoding=speech.RecognitionConfig.AudioEncoding.ENCODING_UNSPECIFIED,
         sample_rate_hertz=16000,
         language_code="en-US",
         enable_word_time_offsets=True,
@@ -106,11 +70,12 @@ def transcribe_gcs_with_word_time_offsets(
 
     return result
 
-
-# [END speech_transcribe_async_word_time_offsets_gcs]
-
-
 if __name__ == "__main__":
+    download_blob(
+        bucket_name="mhacks-video",
+        source_blob_name="video.mp4",
+        destination_file_name="video.mp4",
+    )
     video = VideoFileClip(os.path.join("./","video.mp4"))
     video.audio.write_audiofile(os.path.join("./","video_sound.mp3"))
     upload_blob(
@@ -119,7 +84,4 @@ if __name__ == "__main__":
         destination_blob_name="video_sound.mp3",
     )
     filepath = "gs://mhacks-video/video_sound.mp3"
-    if filepath.__contains__("gs://"):
-        transcribe_gcs_with_word_time_offsets(filepath)
-    else:
-        transcribe_file_with_word_time_offsets(filepath)
+    transcribe_gcs_with_word_time_offsets(filepath)
