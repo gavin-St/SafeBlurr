@@ -12,9 +12,8 @@ In our digital age, video is a powerful medium for storytelling and awareness. Y
 
 1. **Advanced Anonymization**: AI-driven algorithms for automatic and efficient blurring of faces and identifying features.
 2. **Manual Editing Tools**: For precision and control over the anonymization process.
-3. **Real-Time Processing**: Ideal for urgent scenarios, offering quick editing and sharing capabilities.
-4. **User-Friendly Interface**: Accessible to both professionals and casual users, requiring no technical expertise.
-5. **Security and Privacy**: Commitment to data protection, ensuring secure storage and handling of content.
+3. **User-Friendly Interface**: Accessible to both professionals and casual users, requiring no technical expertise.
+4. **Security and Privacy**: Commitment to data protection, ensuring secure storage and handling of content.
 
 ### **Target Audience**
 
@@ -22,5 +21,12 @@ In our digital age, video is a powerful medium for storytelling and awareness. Y
 - **Activists and Protesters**: Documenting events while protecting participant identities.
 - **Public Servants and Law Enforcement**: For responsible data handling.
 - **General Public**: For ethical recording practices in public spaces.
+
+### **Built With:**
+- React-Native
+- Google CLoud Storage
+- FastAPI
+- OpenCV
+- MediaPipe
 
 **SafeBlurr** is not just an app; it's a commitment to ethical media sharing. It's the perfect tool for ensuring truth and integrity in media, while upholding the utmost standards of privacy and safety.
