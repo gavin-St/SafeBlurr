@@ -1,13 +1,13 @@
-from google.cloud import speech
+from google.cloud import speech, storage
 from moviepy.editor import *
-from google.cloud import storage
-
+import csv
+import pandas as pd
+import cv2
 
 def upload_blob(bucket_name, source_file_name, destination_blob_name):
     storage_client = storage.Client()
     bucket = storage_client.bucket(bucket_name)
     blob = bucket.blob(destination_blob_name)
-
     blob.upload_from_filename(source_file_name)
 
     print(
@@ -17,26 +17,18 @@ def upload_blob(bucket_name, source_file_name, destination_blob_name):
 def download_blob(bucket_name, source_blob_name, destination_file_name):
     storage_client = storage.Client()
     bucket = storage_client.bucket(bucket_name)
-
-    # Construct a client side representation of a blob.
-    # Note `Bucket.blob` differs from `Bucket.get_blob` as it doesn't retrieve
-    # any content from Google Cloud Storage. As we don't need additional data,
-    # using `Bucket.blob` is preferred here.
     blob = bucket.blob(source_blob_name)
     blob.download_to_filename(destination_file_name)
-
     print(
         "Downloaded storage object {} from bucket {} to local file {}.".format(
             source_blob_name, bucket_name, destination_file_name
         )
     )
 
-# [START speech_transcribe_async_word_time_offsets_gcs]
 def transcribe_gcs_with_word_time_offsets(
     gcs_uri: str,
 ) -> speech.RecognizeResponse:
-    """Transcribe the given audio file asynchronously and output the word time
-    offsets."""
+    # Transcribe the given audio file asynchronously and output the word time offsets.
     from google.cloud import speech
 
     client = speech.SpeechClient()
@@ -59,15 +51,15 @@ def transcribe_gcs_with_word_time_offsets(
         print(f"Transcript: {alternative.transcript}")
         print(f"Confidence: {alternative.confidence}")
 
+        f = open('transcript.csv', 'w')
+        writer = csv.writer(f, lineterminator = '\n')
         for word_info in alternative.words:
             word = word_info.word
             start_time = word_info.start_time
             end_time = word_info.end_time
-
-            print(
-                f"Word: {word}, start_time: {start_time.total_seconds()}, end_time: {end_time.total_seconds()}"
-            )
-
+            # print([word, start_time.total_seconds(), end_time.total_seconds()])
+            writer.writerow([word, start_time.total_seconds(), end_time.total_seconds()])
+        f.close()
     return result
 
 if __name__ == "__main__":
@@ -85,3 +77,34 @@ if __name__ == "__main__":
     )
     filepath = "gs://mhacks-video/video_sound.mp3"
     transcribe_gcs_with_word_time_offsets(filepath)
+
+    cap = cv2.VideoCapture('video.mp4')
+    out = cv2.VideoWriter('output.mp4', -1, 20.0, (640,480))
+    while(cap.isOpened()): 
+        success, frame = cap.read() 
+        if not success:
+            break
+
+        font = cv2.FONT_HERSHEY_SIMPLEX 
+    
+        # Use putText() method for 
+        # inserting text on video 
+        cv2.putText(frame,  
+                    'TEXT ON VIDEO',  
+                    (50, 50),  
+                    font, 1,  
+                    (0, 255, 255),  
+                    2,  
+                    cv2.LINE_4) 
+        # Display the resulting frame 
+        out.write(frame)
+    
+        # creating 'q' as the quit  
+        # button for the video 
+        if cv2.waitKey(1) & 0xFF == ord('q'): 
+            break
+    # release the cap object 
+    cap.release()
+    out.release()
+    # close all windows 
+    cv2.destroyAllWindows() 
