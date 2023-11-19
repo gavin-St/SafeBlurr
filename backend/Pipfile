@@ -12,6 +12,7 @@ opencv-python = "*"
 flask = "*"
 mediapipe = "*"
 numpy = "*"
+flask-cors = "*"
 
 [dev-packages]
 
