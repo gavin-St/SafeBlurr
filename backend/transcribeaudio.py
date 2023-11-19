@@ -4,11 +4,11 @@ from moviepy.video.tools.subtitles import SubtitlesClip
 import csv
 import pandas as pd
 
-def transcribe_audio(input_video_path):
-    video = VideoFileClip(os.path.join("./", input_video_path))
+def transcribe_audio(upload_folder, input_video_path):
+    video = VideoFileClip(input_video_path)
     upload_blob(
         bucket_name="mhacks-video",
-        source_file_name="video_sound.wav",
+        source_file_name=os.path.join(upload_folder, "video_sound.wav"),
         destination_blob_name="video_sound.wav",
     )
     filepath = "gs://mhacks-video/video_sound.wav"
@@ -26,7 +26,7 @@ def transcribe_audio(input_video_path):
     subtitles = SubtitlesClip(subs, generator)
     result = CompositeVideoClip([video, subtitles.set_pos(('center','bottom'))])
 
-    result.write_videofile("output_video_final.mp4")
+    result.write_videofile(os.path.join(upload_folder, "output_video_final.mp4"))
     return "output_video_final.mp4"
 
 def upload_blob(bucket_name, source_file_name, destination_blob_name):
