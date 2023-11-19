@@ -15,7 +15,7 @@ def home():
 
 @app.route("/process", methods=['POST'])
 def process():
-  print(request)
+  #print(request)
   if 'video' not in request.files:
     return "No video part in the request"
 
@@ -24,7 +24,7 @@ def process():
   if video.filename == '':
     return "No selected video"
 
-  filename = os.path.join(UPLOAD_FOLDER, video.filename)
+  filename = os.path.join(UPLOAD_FOLDER, "video.mp4")
   video.save(filename)
 
   # start the video processing
