@@ -16,7 +16,7 @@ def blur_video(input_video_path, upload_folder):
   # define codec and create VideoWriter object
   fourcc = cv.VideoWriter_fourcc(*'h264') 
   output_video_path = 'output_video.mp4'
-  out = cv.VideoWriter(output_video_path, fourcc, fps, (int(cap.get(3)), int(cap.get(4))), True)
+  out = cv.VideoWriter(os.path.join(upload_folder, output_video_path), fourcc, fps, (int(cap.get(3)), int(cap.get(4))), True)
   print((int(cap.get(3)), int(cap.get(4))))
   face_data = []
   frame_index = 0
@@ -82,7 +82,7 @@ def blur_video(input_video_path, upload_folder):
   audio_output_path = os.path.join(upload_folder, "video_sound.wav")
   video.audio.write_audiofile(audio_output_path, codec='pcm_s16le')
 
-  videoclip = VideoFileClip(output_video_path)
+  videoclip = VideoFileClip(os.path.join(upload_folder, output_video_path))
   audioclip = AudioFileClip(audio_output_path)
   new_audioclip = CompositeAudioClip([audioclip])
   videoclip.audio = new_audioclip
@@ -90,4 +90,4 @@ def blur_video(input_video_path, upload_folder):
   final_output_path = os.path.join(upload_folder, "output_video_2.mp4")
   videoclip.write_videofile(final_output_path)
 
-  return "output_video_2.mp4"
+  return os.path.join(upload_folder, "output_video_2.mp4")
