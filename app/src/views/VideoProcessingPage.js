@@ -83,6 +83,7 @@ const VideoProcessingPage = ({ route, navigation }) => {
         "http://100.64.5.247:3000/process",
         videoData,
         {
+          videoSettings: {videoSettings},
           responseType: "blob",
           headers: {
             "Content-Type": "multipart/form-data",
