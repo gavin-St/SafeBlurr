@@ -1,23 +1,20 @@
+import os
 from pydub import AudioSegment
 from pydub.playback import play
-import os
 
-# pip install pydub
 
-file_path = "data/test-video.mp4"
-if not os.path.exists(file_path):
-    print(f"File not found: {file_path}")
-else:
-    print("Yes")
-    audio = AudioSegment.from_file(file_path, format="mp4")
+cwd = os.getcwd()
 
-    # Set the desired pitch shift factor (1.0 means no change)
-    pitch_factor = 1.5  # Adjust as needed
+sound = AudioSegment.from_file("video_sound.mp3")
 
-    # Apply the pitch shift
-    audio_pitch_shifted = audio._spawn(audio.raw_data, overrides={
-        "frame_rate": int(audio.frame_rate * pitch_factor)
-    })
+print(sound.frame_rate)
 
-    # Export the modified audio
-    audio_pitch_shifted.export("output_pitch_shifted.mp3", format="mp3")
+# shift the pitch down by half an octave (speed will decrease proportionally)
+octaves = -0.2
+
+new_sample_rate = int(sound.frame_rate * (2.0 ** octaves))
+
+lowpitch_sound = sound._spawn(sound.raw_data, overrides={'frame_rate': new_sample_rate})
+
+#Play pitch changed sound
+lowpitch_sound.export("low-pitch.mp3", format="mp3")
