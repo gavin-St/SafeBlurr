@@ -1,20 +1,11 @@
-import os
-from pydub import AudioSegment
-from pydub.playback import play
+import librosa
+import soundfile as sf
 
+def pitch_shift(input_file, output_file, pitch_factor):
+  y, sr = librosa.load(input_file, sr=None)
+  y_shifted = librosa.effects.pitch_shift(y, n_steps=pitch_factor, sr=sr)
 
-cwd = os.getcwd()
+  sf.write(output_file, y_shifted, sr)
 
-sound = AudioSegment.from_file("video_sound.mp3")
-
-print(sound.frame_rate)
-
-# shift the pitch down by half an octave (speed will decrease proportionally)
-octaves = -0.2
-
-new_sample_rate = int(sound.frame_rate * (2.0 ** octaves))
-
-lowpitch_sound = sound._spawn(sound.raw_data, overrides={'frame_rate': new_sample_rate})
-
-#Play pitch changed sound
-lowpitch_sound.export("low-pitch.mp3", format="mp3")
+# Usage
+pitch_shift('video_sound.mp3', 'pitch_shifted.mp3', -10)  # example: shift down by 2 semitones
