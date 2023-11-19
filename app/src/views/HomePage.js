@@ -22,9 +22,6 @@ const HomePage = ({ navigation }) => {
   const [isRecording, setIsRecording] = useState(false);
   const cameraRef = useRef(null);
   const [videos, setVideos] = useState([]);
-  const [captions, setCaptions] = useState(false);
-  const [audio, setAudio] = useState(false);
-  const [meta, setMeta] = useState(false);
 
   // Request camera and media library permissions
   useEffect(() => {
@@ -50,7 +47,7 @@ const HomePage = ({ navigation }) => {
         setVideos(assets);
       }
     })();
-  }, [hasPermission]);
+  }, [hasPermission, navigation]);
 
   const openCamera = () => {
     setCameraVisible(true);
@@ -67,7 +64,7 @@ const HomePage = ({ navigation }) => {
     if (cameraRef.current) {
       setIsRecording(true);
       const video = await cameraRef.current.recordAsync();
-      if (video) {
+      if (video && cameraVisible) {
         closeCamera();
         handleVideo(video.uri);
       }
@@ -116,59 +113,24 @@ const HomePage = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>My Videos</Text>
+      <View style={{ width: '100%', alignItems: "flex-start" }}>
+        <Text style={styles.title}>My Videos</Text>
+      </View>
       {/* map over last 5 videos in camera roll and display them */}
-      <ScrollView horizontal>
+      <ScrollView horizontal={false} style={styles.videoSlider}>
         {videos.map((video, index) => (
-          <TouchableOpacity key={index} onPress={() => handleVideo(video.uri)}>
+          <TouchableOpacity key={index} onPress={() => handleVideo(video.uri)} style={styles.videoItem}>
             <Image
               source={{ uri: video.uri }}
-              style={{ width: 400, height: 400, marginRight: 15 }}
+              style={styles.videoImage}
             />
           </TouchableOpacity>
         ))}
       </ScrollView>
-      <Text>Settings</Text>
-      {/* setting toggle shit goes here */}
-      <View style={{ flexDirection: "row" }}>
-        <View style={{ flexDirection: "column" }}>
-          <Text>Captions</Text>
-          <Switch
-            trackColor={{ false: "#ffffff", true: "#2fc5b7" }}
-            thumbColor={"#ffffff"}
-            ios_backgroundColor="#ffffff"
-            onValueChange={() => {
-              setCaptions((prev) => !prev);
-            }}
-            value={captions}
-          />
-        </View>
-        <View style={{ flexDirection: "column" }}>
-          <Text>Blur Audio</Text>
-          <Switch
-            trackColor={{ false: "#ffffff", true: "#2fc5b7" }}
-            thumbColor={"#ffffff"}
-            ios_backgroundColor="#ffffff"
-            onValueChange={() => {
-              setAudio((prev) => !prev);
-            }}
-            value={audio}
-          />
-        </View>
-        <View style={{ flexDirection: "column" }}>
-          <Text>Clean</Text>
-          <Switch
-            trackColor={{ false: "#ffffff", true: "#2fc5b7" }}
-            thumbColor={"#ffffff"}
-            ios_backgroundColor="#ffffff"
-            onValueChange={() => {
-              setMeta((prev) => !prev);
-            }}
-            value={meta}
-          />
-        </View>
-      </View>
-      <Button title="Open Camera" onPress={openCamera} />
+
+      <TouchableOpacity onPress={openCamera} style={styles.button}>
+        <Text style={styles.buttonText}>Open Camera</Text>
+      </TouchableOpacity>
       <Modal
         visible={cameraVisible}
         onRequestClose={closeCamera}
@@ -181,7 +143,7 @@ const HomePage = ({ navigation }) => {
           type={Camera.Constants.Type.back}
         >
           <TouchableOpacity style={styles.closeButton} onPress={closeCamera}>
-            <MaterialIcons name="close" size={40} color="white" />
+            <MaterialIcons name="close" size={50} color="white" />
           </TouchableOpacity>
           <View style={styles.cameraControls}>
             <TouchableOpacity
