@@ -13,15 +13,17 @@ import axios from "axios";
 import * as FileSystem from "expo-file-system";
 import * as MediaLibrary from "expo-media-library";
 import * as Progress from 'react-native-progress';
+import styles from "../styles/VideoProcessingPageStyles";
+import VideoOptions from '../components/VideoOptions'; // Adjust the import path
 
 const VideoProcessingPage = ({ route, navigation }) => {
-  let { videoUri } = route.params;
-
-  const [fullScreen, setFullScreen] = useState(false);
+  const { videoUri } = route.params;
   const [loading, setLoading] = useState(false);
+  const [videoSettings, setVideoSettings] = useState({});
 
-  const toggleFullScreen = () => {
-    setFullScreen(!fullScreen);
+  const handleOptionsChange = (newSettings) => {
+    setVideoSettings(newSettings);
+    // Additional logic when options change
   };
 
   const saveVideoToFileSystem = async (videoBlob) => {
@@ -121,7 +123,7 @@ const VideoProcessingPage = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text>Your recorded video: </Text>
+      {/* <Text style={styles.videoText}>Your Video </Text> */}
       <Video
         source={{ uri: videoUri }}
         style={styles.video}
@@ -130,33 +132,14 @@ const VideoProcessingPage = ({ route, navigation }) => {
         isLooping={false}
         onError={(e) => console.log("Video Error:", e)}
       />
-      {/* add form options and shit here*/}
-      <Button title="Submit Video" onPress={handleSubmit} />
+      <VideoOptions onOptionsChange={handleOptionsChange} />
+      <View style={{alignItems: "center"}}>
+      <TouchableOpacity onPress={handleSubmit} style={styles.button}>
+        <Text style={styles.buttonText}>Submit Video</Text>
+      </TouchableOpacity>
+      </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  video: {
-    width: "100%",
-    height: "66%",
-  },
-  loading: {
-    flex: 1,
-    backgroundColor: '#2fc5b7',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  logo: {
-    width: "50%",
-    height: "50%",
-    resizeMode: 'contain',
-  },
-});
 
 export default VideoProcessingPage;
