@@ -1,24 +1,52 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, Button, Modal, Alert, StyleSheet, TouchableOpacity } from 'react-native';
-import { Camera } from 'expo-camera';
-import * as MediaLibrary from 'expo-media-library';
-import { MaterialIcons } from '@expo/vector-icons';
-import styles from '../styles/HomePageStyles';
+import React, { useState, useRef, useEffect } from "react";
+import {
+  View,
+  Text,
+  Button,
+  Modal,
+  Alert,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Image
+} from "react-native";
+import { Camera } from "expo-camera";
+import * as MediaLibrary from "expo-media-library";
+import { MaterialIcons } from "@expo/vector-icons";
+import styles from "../styles/HomePageStyles";
 
 const HomePage = ({ navigation }) => {
   const [cameraVisible, setCameraVisible] = useState(false);
   const [hasPermission, setHasPermission] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
   const cameraRef = useRef(null);
+  const [videos, setVideos] = useState([]);
 
   // Request camera and media library permissions
   useEffect(() => {
     (async () => {
       const cameraStatus = await Camera.requestPermissionsAsync();
       const mediaLibraryStatus = await MediaLibrary.requestPermissionsAsync();
-      setHasPermission(cameraStatus.status === 'granted' && mediaLibraryStatus.status === 'granted');
+      setHasPermission(
+        cameraStatus.status === "granted" &&
+          mediaLibraryStatus.status === "granted"
+      );
     })();
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      // Fetch last 5 videos
+      if (hasPermission) {
+        const { assets } = await MediaLibrary.getAssetsAsync({
+          mediaType: 'video',
+          first: 5,
+          sortBy: MediaLibrary.SortBy.creationTime,
+        });
+        setVideos(assets);
+      }
+    })();
+  }, [hasPermission]);
 
   const openCamera = () => {
     setCameraVisible(true);
@@ -49,31 +77,74 @@ const HomePage = ({ navigation }) => {
     }
   };
 
-  const handleVideo = (uri) => {
-    navigation.navigate('VideoProcessing', { videoUri: uri });
+  const handleVideo = async (uri) => {
+    if (uri.startsWith('ph://')) {
+      const assetId = uri.slice(5).split('/')[0];
+      try {
+        const assetInfo = await MediaLibrary.getAssetInfoAsync(assetId);
+        if (assetInfo.localUri) {
+          navigation.navigate("VideoProcessing", { videoUri: assetInfo.localUri });
+        } else {
+          Alert.alert("Error", "Unable to access video");
+        }
+      } catch (error) {
+        console.error("Error accessing media library", error);
+        Alert.alert("Error", "An error occurred while accessing the video");
+      }
+    } else {
+      navigation.navigate("VideoProcessing", { videoUri: uri });
+    }
   };
+  
 
   if (hasPermission === null || hasPermission === false) {
-    return <View><Text>{hasPermission === null ? 'Requesting permissions...' : 'No access to camera'}</Text></View>;
+    return (
+      <View>
+        <Text>
+          {hasPermission === null
+            ? "Requesting permissions..."
+            : "No access to camera"}
+        </Text>
+      </View>
+    );
   }
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Home Screen</Text>
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <Text>My Videos</Text>
+      {/*map over last 5 videos in camera roll and display them */}
+      <ScrollView horizontal>
+        {videos.map((video, index) => (
+          <TouchableOpacity key={index} onPress={() => handleVideo(video.uri)}>
+            <Image
+              source={{ uri: video.uri }}
+              style={{ width: 100, height: 100, margin: 5 }}
+            />
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
       <Button title="Open Camera" onPress={openCamera} />
-
       <Modal
         visible={cameraVisible}
         onRequestClose={closeCamera}
         animationType="slide"
         transparent={false}
       >
-        <Camera style={{ flex: 1 }} ref={cameraRef} type={Camera.Constants.Type.back}>
-            <TouchableOpacity style={styles.closeButton} onPress={closeCamera}>
-              <MaterialIcons name="close" size={40} color="white" />
-            </TouchableOpacity>
+        <Camera
+          style={{ flex: 1 }}
+          ref={cameraRef}
+          type={Camera.Constants.Type.back}
+        >
+          <TouchableOpacity style={styles.closeButton} onPress={closeCamera}>
+            <MaterialIcons name="close" size={40} color="white" />
+          </TouchableOpacity>
           <View style={styles.cameraControls}>
-            <TouchableOpacity style={isRecording ? styles.recordingButton : styles.notRecordingButton} onPress={isRecording ? stopRecording : startRecording}>
+            <TouchableOpacity
+              style={
+                isRecording ? styles.recordingButton : styles.notRecordingButton
+              }
+              onPress={isRecording ? stopRecording : startRecording}
+            >
               {isRecording && <View style={styles.innerCircle} />}
             </TouchableOpacity>
           </View>
