@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
     alignItems: 'left',
     marginBottom: -2,
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: "600",
   },
   cameraControls: {
     position: 'absolute',
@@ -65,6 +65,7 @@ const styles = StyleSheet.create({
     // Add other styles as needed
   },
   button: {
+    flexDirection: "row",
     backgroundColor: 'white',          // White background
     borderColor: '#2fc5b7',            // Accent border color
     borderWidth: 2,                    // Border width

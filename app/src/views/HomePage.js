@@ -113,7 +113,7 @@ const HomePage = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <View style={{ width: '100%', alignItems: "flex-start" }}>
+      <View style={{ width: '100%', alignItems: "flex-start", borderBottomWidth: 3, borderBottomColor: '#2fc5b7'}}>
         <Text style={styles.title}>My Videos</Text>
       </View>
       {/* map over last 5 videos in camera roll and display them */}
@@ -129,6 +129,7 @@ const HomePage = ({ navigation }) => {
       </ScrollView>
 
       <TouchableOpacity onPress={openCamera} style={styles.button}>
+        <MaterialIcons name="camera-alt" size={24} color="#2fc5b7" style={{marginRight: 4, marginTop: 1}} />
         <Text style={styles.buttonText}>Open Camera</Text>
       </TouchableOpacity>
       <Modal
