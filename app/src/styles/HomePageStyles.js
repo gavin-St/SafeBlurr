@@ -8,7 +8,6 @@ const styles = StyleSheet.create({
   },
   title: {
     padding: 12,
-    alignItems: 'left',
     marginBottom: -2,
     fontSize: 20,
     fontWeight: "600",
