@@ -1,8 +1,11 @@
 from flask import Flask, request, send_from_directory
+from flask_cors import CORS
 import os
 from blurvideo import *
+from transcribeaudio import *
 
 app = Flask(__name__)
+CORS(app)
  
 # set up temporary folder to hold the video
 UPLOAD_FOLDER = 'tempuploads'
@@ -28,7 +31,7 @@ def process():
   video.save(filename)
 
   # start the video processing
-  processed_filename = blur_video(filename)
+  processed_filename = transcribe_audio(blur_video(filename))
 
   return send_from_directory(UPLOAD_FOLDER, processed_filename, as_attachment=True)
 
