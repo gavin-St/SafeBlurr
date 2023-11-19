@@ -1,9 +1,25 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Button, Alert, TouchableOpacity } from 'react-native';
-import Video from 'react-native-video';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, Button, Alert, TouchableOpacity, Text } from 'react-native';
+import { Video, resizeMode } from 'expo-av';
+import axios from 'axios';
 
 const VideoProcessingPage = ({ route, navigation }) => {
-  const { videoUri } = route.params;
+  let { videoUri } = route.params;
+  videoUri = "https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4";
+  const [videoRef, setVideoRef] = useState(null);
+
+  useEffect(() => {
+    if (videoRef) {
+      (async () => {
+        await videoRef.loadAsync(
+          { uri: videoUri },
+          {}, // Any initial status for the video
+          false // Download first - set to true if the video should be downloaded to the device cache first
+        );
+      })();
+    }
+  }, [videoRef]);
+
   const [fullScreen, setFullScreen] = useState(false);
 
   const toggleFullScreen = () => {
@@ -17,6 +33,8 @@ const VideoProcessingPage = ({ route, navigation }) => {
       type: 'video/mp4',
       name: 'upload.mp4'
     });
+
+    console.log(video)
 
     try {
       const response = await axios.post('https://your-server.com/upload', videoData, {
@@ -34,12 +52,16 @@ const VideoProcessingPage = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
+      <Text>HELP</Text>
       <TouchableOpacity onPress={toggleFullScreen}>
-        <Video 
-          source={{ uri: videoUri }}   // Can be a URL or a local file.
-          style={fullScreen ? styles.fullScreenVideo : styles.video} // Toggle styles
-          controls                    // Include player controls
-          resizeMode="cover"          // Fill the whole screen at aspect ratio.
+        <Video
+          ref={ref => setVideoRef(ref)}
+          source={{ uri: videoUri }}
+          style={fullScreen ? styles.fullScreenVideo : styles.video}
+          useNativeControls // If you want to show video controls
+          resizeMode="contain" // Or 'cover' depending on your preference
+          shouldPlay
+          onError={(e) => console.log('Video Error:', e)} // Log errors
         />
       </TouchableOpacity>
       <Button title="Submit Video" onPress={handleSubmit} />
@@ -55,7 +77,7 @@ const styles = StyleSheet.create({
   },
   video: {
     width: '100%',
-    height: '66%', // 2/3 of the page
+    height: '66%', 
   },
   fullScreenVideo: {
     position: 'absolute',

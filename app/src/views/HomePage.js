@@ -36,6 +36,7 @@ const HomePage = ({ navigation }) => {
       setIsRecording(true);
       const video = await cameraRef.current.recordAsync();
       if (video) {
+        closeCamera();
         handleVideo(video.uri);
       }
     }
