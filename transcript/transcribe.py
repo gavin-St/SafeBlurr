@@ -68,7 +68,7 @@ def transcribe_gcs_with_word_time_offsets(
 if __name__ == "__main__":
     download_blob(
         bucket_name="mhacks-video",
-        source_blob_name="longrally.mp4",
+        source_blob_name="climatechange.mp4",
         destination_file_name="video.mp4",
     )
     video = VideoFileClip(os.path.join("./","video.mp4"))

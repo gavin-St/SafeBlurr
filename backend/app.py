@@ -1,6 +1,7 @@
 from flask import Flask, request, send_from_directory
 import os
 from blurvideo import *
+from transcribeaudio import *
 
 app = Flask(__name__)
  
@@ -28,7 +29,7 @@ def process():
   video.save(filename)
 
   # start the video processing
-  processed_filename = blur_video(filename)
+  processed_filename = transcribe_audio(blur_video(filename))
 
   return send_from_directory(UPLOAD_FOLDER, processed_filename, as_attachment=True)
 
