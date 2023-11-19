@@ -37,7 +37,7 @@ const VideoProcessingPage = ({ route, navigation }) => {
       return uri;
     } catch (error) {
       console.error("Error saving video:", error);
-      throw error; // rethrow the error for further handling
+      throw error;
     }
   };
 
@@ -109,7 +109,7 @@ const VideoProcessingPage = ({ route, navigation }) => {
     return (
       <View style={styles.loading}>
         <Image
-          source={require('../assets/logo2.png')} // Replace with the correct path to your logo
+          source={require('../assets/logo2.png')}
           style={styles.logo}
         />
         <Text style={{ color: "#FFFFFF" }}>
@@ -128,7 +128,7 @@ const VideoProcessingPage = ({ route, navigation }) => {
         useNativeControls
         resizeMode={ResizeMode.CONTAIN}
         isLooping={false}
-        onError={(e) => console.log("Video Error:", e)} // Log errors
+        onError={(e) => console.log("Video Error:", e)}
       />
       {/* add form options and shit here*/}
       <Button title="Submit Video" onPress={handleSubmit} />
