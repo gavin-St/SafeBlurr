@@ -31,7 +31,7 @@ def process():
   video.save(filename)
 
   # start the video processing
-  processed_filename = transcribe_audio(blur_video(filename))
+  processed_filename = blur_video(filename, UPLOAD_FOLDER)
 
   return send_from_directory(UPLOAD_FOLDER, processed_filename, as_attachment=True)
 

@@ -4,7 +4,7 @@ import numpy as np
 from moviepy.editor import *
 from moviepy.video.tools.subtitles import SubtitlesClip
 
-def blur_video(input_video_path):
+def blur_video(input_video_path, upload_folder):
 
   mp_face_detection = mp.solutions.face_detection
   face_detector = mp_face_detection.FaceDetection(model_selection=1, min_detection_confidence=0.2)
@@ -78,11 +78,16 @@ def blur_video(input_video_path):
   cv.destroyAllWindows()
 
   # Begin combining into mp4
-  video = VideoFileClip(os.path.join("./", input_video_path))
-  video.audio.write_audiofile(os.path.join("./","video_sound.wav"), codec='pcm_s16le')
-  videoclip = VideoFileClip(os.path.join("./", "output_video.mp4"))
-  audioclip = AudioFileClip("video_sound.wav")
+  video = VideoFileClip(input_video_path)
+  audio_output_path = os.path.join(upload_folder, "video_sound.wav")
+  video.audio.write_audiofile(audio_output_path, codec='pcm_s16le')
+
+  videoclip = VideoFileClip(output_video_path)
+  audioclip = AudioFileClip(audio_output_path)
   new_audioclip = CompositeAudioClip([audioclip])
   videoclip.audio = new_audioclip
-  videoclip.write_videofile("output_video_2.mp4")
+
+  final_output_path = os.path.join(upload_folder, "output_video_2.mp4")
+  videoclip.write_videofile(final_output_path)
+
   return "output_video_2.mp4"

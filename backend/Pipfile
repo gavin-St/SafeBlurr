@@ -14,6 +14,7 @@ mediapipe = "*"
 numpy = "*"
 flask-cors = "*"
 ffpyplayer = "*"
+ffmpeg = "*"
 
 [dev-packages]
 

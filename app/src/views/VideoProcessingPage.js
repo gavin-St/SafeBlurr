@@ -21,11 +21,10 @@ const VideoProcessingPage = ({ route, navigation }) => {
       type: 'video/mp4',
       name: 'upload.mp4'
     });
-
-    console.log(video)
-
+    console.log("hi")
     try {
-      const response = await axios.post('https://your-server.com/upload', videoData, {
+      console.log("attempting")
+      const response = await axios.post('http://100.64.5.247:3000/process', videoData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
