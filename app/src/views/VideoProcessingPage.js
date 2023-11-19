@@ -80,7 +80,7 @@ const VideoProcessingPage = ({ route, navigation }) => {
       setLoading(true);
       console.log("attempting upload...");
       const response = await axios.post(
-        "http://100.64.5.247:3000/process",
+        "http://35.0.135.225:3000/process",
         videoData,
         {
           videoSettings: {videoSettings},

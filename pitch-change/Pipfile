@@ -5,6 +5,8 @@ name = "pypi"
 
 [packages]
 pydub = "*"
+librosa = "*"
+soundfile = "*"
 
 [dev-packages]
 
