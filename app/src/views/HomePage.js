@@ -8,7 +8,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  Image
+  Image,
+  Switch,
 } from "react-native";
 import { Camera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
@@ -21,6 +22,9 @@ const HomePage = ({ navigation }) => {
   const [isRecording, setIsRecording] = useState(false);
   const cameraRef = useRef(null);
   const [videos, setVideos] = useState([]);
+  const [captions, setCaptions] = useState(false);
+  const [audio, setAudio] = useState(false);
+  const [meta, setMeta] = useState(false);
 
   // Request camera and media library permissions
   useEffect(() => {
@@ -39,7 +43,7 @@ const HomePage = ({ navigation }) => {
       // Fetch last 5 videos
       if (hasPermission) {
         const { assets } = await MediaLibrary.getAssetsAsync({
-          mediaType: 'video',
+          mediaType: "video",
           first: 5,
           sortBy: MediaLibrary.SortBy.creationTime,
         });
@@ -78,12 +82,14 @@ const HomePage = ({ navigation }) => {
   };
 
   const handleVideo = async (uri) => {
-    if (uri.startsWith('ph://')) {
-      const assetId = uri.slice(5).split('/')[0];
+    if (uri.startsWith("ph://")) {
+      const assetId = uri.slice(5).split("/")[0];
       try {
         const assetInfo = await MediaLibrary.getAssetInfoAsync(assetId);
         if (assetInfo.localUri) {
-          navigation.navigate("VideoProcessing", { videoUri: assetInfo.localUri });
+          navigation.navigate("VideoProcessing", {
+            videoUri: assetInfo.localUri,
+          });
         } else {
           Alert.alert("Error", "Unable to access video");
         }
@@ -95,7 +101,6 @@ const HomePage = ({ navigation }) => {
       navigation.navigate("VideoProcessing", { videoUri: uri });
     }
   };
-  
 
   if (hasPermission === null || hasPermission === false) {
     return (
@@ -112,17 +117,57 @@ const HomePage = ({ navigation }) => {
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Text>My Videos</Text>
-      {/*map over last 5 videos in camera roll and display them */}
+      {/* map over last 5 videos in camera roll and display them */}
       <ScrollView horizontal>
         {videos.map((video, index) => (
           <TouchableOpacity key={index} onPress={() => handleVideo(video.uri)}>
             <Image
               source={{ uri: video.uri }}
-              style={{ width: 100, height: 100, margin: 5 }}
+              style={{ width: 400, height: 400, marginRight: 15 }}
             />
           </TouchableOpacity>
         ))}
       </ScrollView>
+      <Text>Settings</Text>
+      {/* setting toggle shit goes here */}
+      <View style={{ flexDirection: "row" }}>
+        <View style={{ flexDirection: "column" }}>
+          <Text>Captions</Text>
+          <Switch
+            trackColor={{ false: "#ffffff", true: "#2fc5b7" }}
+            thumbColor={"#ffffff"}
+            ios_backgroundColor="#ffffff"
+            onValueChange={() => {
+              setCaptions((prev) => !prev);
+            }}
+            value={captions}
+          />
+        </View>
+        <View style={{ flexDirection: "column" }}>
+          <Text>Blur Audio</Text>
+          <Switch
+            trackColor={{ false: "#ffffff", true: "#2fc5b7" }}
+            thumbColor={"#ffffff"}
+            ios_backgroundColor="#ffffff"
+            onValueChange={() => {
+              setAudio((prev) => !prev);
+            }}
+            value={audio}
+          />
+        </View>
+        <View style={{ flexDirection: "column" }}>
+          <Text>Clean</Text>
+          <Switch
+            trackColor={{ false: "#ffffff", true: "#2fc5b7" }}
+            thumbColor={"#ffffff"}
+            ios_backgroundColor="#ffffff"
+            onValueChange={() => {
+              setMeta((prev) => !prev);
+            }}
+            value={meta}
+          />
+        </View>
+      </View>
       <Button title="Open Camera" onPress={openCamera} />
       <Modal
         visible={cameraVisible}
