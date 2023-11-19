@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, Button, Modal, Alert } from 'react-native';
+import { View, Text, Button, Modal, Alert, StyleSheet, TouchableOpacity } from 'react-native';
 import { Camera } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import axios from 'axios';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const HomePage = ({ navigation }) => {
   const [cameraVisible, setCameraVisible] = useState(false);
@@ -35,7 +36,7 @@ const HomePage = ({ navigation }) => {
       setIsRecording(true);
       const video = await cameraRef.current.recordAsync();
       if (video) {
-        uploadVideo(video.uri);
+        handleVideo(video.uri);
       }
     }
   };
@@ -47,25 +48,8 @@ const HomePage = ({ navigation }) => {
     }
   };
 
-  const uploadVideo = async (uri) => {
-    const videoData = new FormData();
-    videoData.append('video', {
-      uri: uri,
-      type: 'video/mp4', // or another video format if known
-      name: 'upload.mp4'
-    });
-    console.log(videoData);
-    try {
-      const response = await axios.post('https://your-server.com/upload', videoData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      Alert.alert('Upload Successful', 'Your video was successfully uploaded!');
-    } catch (error) {
-      console.error('Error uploading video: ', error);
-      Alert.alert('Upload Failed', 'Failed to upload video.');
-    }
+  const handleVideo = (uri) => {
+    navigation.navigate('VideoProcessing', { videoUri: uri });
   };
 
   if (hasPermission === null || hasPermission === false) {
@@ -81,20 +65,64 @@ const HomePage = ({ navigation }) => {
         visible={cameraVisible}
         onRequestClose={closeCamera}
         animationType="slide"
+        transparent={false}
       >
         <Camera style={{ flex: 1 }} ref={cameraRef} type={Camera.Constants.Type.back}>
-          <View style={{ flex: 1, backgroundColor: 'transparent', flexDirection: 'row', justifyContent: 'center', margin: 20 }}>
-            {isRecording ? (
-              <Button title="Stop Recording" onPress={stopRecording} />
-            ) : (
-              <Button title="Start Recording" onPress={startRecording} />
-            )}
-            <Button title="Close Camera" onPress={closeCamera} />
+            <TouchableOpacity style={styles.closeButton} onPress={closeCamera}>
+              <MaterialIcons name="close" size={40} color="white" />
+            </TouchableOpacity>
+          <View style={styles.cameraControls}>
+            <TouchableOpacity style={isRecording ? styles.recordingButton : styles.notRecordingButton} onPress={isRecording ? stopRecording : startRecording}>
+              {isRecording && <View style={styles.innerCircle} />}
+            </TouchableOpacity>
           </View>
         </Camera>
       </Modal>
     </View>
   );
 };
+
+// Add styles
+const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    cameraControls: {
+        position: 'absolute',
+        bottom: 36, // Position at the bottom of the screen
+        left: 0,
+        right: 0,
+        alignItems: 'center', // Center horizontally
+    },
+    recordingButton: {
+      borderWidth: 3,
+      borderColor: 'red',
+      borderRadius: 40,
+      padding: 15,
+      alignSelf: 'center',
+    },
+    notRecordingButton: {
+      borderWidth: 6,
+      borderColor: 'white',
+      borderRadius: 40,
+      width: 70, 
+      height: 70,
+      padding: 15,
+      alignSelf: 'center',
+    },
+    innerCircle: {
+      width: 26,
+      height: 26,
+      backgroundColor: 'red',
+      borderRadius: 12,
+    },
+    closeButton: {
+      position: 'absolute',
+      top: 36,
+      right: 25,
+    },
+  });   
 
 export default HomePage;
