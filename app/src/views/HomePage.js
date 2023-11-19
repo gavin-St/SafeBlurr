@@ -1,7 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, Button, Modal, Alert } from 'react-native';
 import { Camera } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
+import axios from 'axios';
 
 const HomePage = ({ navigation }) => {
   const [cameraVisible, setCameraVisible] = useState(false);
@@ -34,7 +35,7 @@ const HomePage = ({ navigation }) => {
       setIsRecording(true);
       const video = await cameraRef.current.recordAsync();
       if (video) {
-        saveVideo(video.uri);
+        uploadVideo(video.uri);
       }
     }
   };
@@ -46,14 +47,24 @@ const HomePage = ({ navigation }) => {
     }
   };
 
-  const saveVideo = async (uri) => {
+  const uploadVideo = async (uri) => {
+    const videoData = new FormData();
+    videoData.append('video', {
+      uri: uri,
+      type: 'video/mp4', // or another video format if known
+      name: 'upload.mp4'
+    });
+    console.log(videoData);
     try {
-      const asset = await MediaLibrary.createAssetAsync(uri); // Save the video to the media library
-      await MediaLibrary.createAlbumAsync('YourAlbumName', asset, false);
-      Alert.alert('Video saved', 'Your video was successfully saved in the gallery!');
+      const response = await axios.post('https://your-server.com/upload', videoData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      Alert.alert('Upload Successful', 'Your video was successfully uploaded!');
     } catch (error) {
-      console.log('Error saving video: ', error);
-      Alert.alert('Error', 'Failed to save video.');
+      console.error('Error uploading video: ', error);
+      Alert.alert('Upload Failed', 'Failed to upload video.');
     }
   };
 
