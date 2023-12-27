@@ -1,8 +1,8 @@
 from flask import Flask, request, send_from_directory
 from flask_cors import CORS
 import os
-from blurvideo import *
-from transcribeaudio import *
+from backend.blur_video import *
+from backend.transcribe_audio import *
 
 app = Flask(__name__)
 CORS(app)
