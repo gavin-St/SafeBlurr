@@ -129,7 +129,7 @@ const HomePage = ({ navigation }) => {
       </ScrollView>
 
       <TouchableOpacity onPress={openCamera} style={styles.button}>
-        <MaterialIcons name="camera-alt" size={24} color="#2fc5b7" style={{marginRight: 4, marginTop: 1}} />
+        <MaterialIcons name="camera-alt" size={24} color="#2fc5b7" style={{marginRight: 4, marginTop:}} />
         <Text style={styles.buttonText}>Open Camera</Text>
       </TouchableOpacity>
       <Modal

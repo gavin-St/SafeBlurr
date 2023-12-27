@@ -1,18 +1,12 @@
 import React from 'react';
 import { View, Text, Button } from 'react-native';
-// ... import camera package ...
 
-const HomePage = ({ navigation }) => {
-  const openCamera = () => {
-    // Logic to open the camera
-  };
-
+const SettingsPage = ({ navigation }) => {
   return (
     <View>
-      <Text>Home Screen</Text>
-      <Button title="Open Camera" onPress={openCamera} />
+      <Text>Settings</Text>
     </View>
   );
 };
 
-export default HomePage;
+export default SettingsPage;

@@ -28,25 +28,25 @@ const styles = StyleSheet.create({
       resizeMode: 'contain',
     },
     button: {
-        backgroundColor: 'white',          // White background
-        borderColor: '#2fc5b7',            // Accent border color
-        borderWidth: 2,                    // Border width
-        borderRadius: 10,                  // Rounded corners
+        backgroundColor: 'white',
+        borderColor: '#2fc5b7',
+        borderWidth: 2, 
+        borderRadius: 10,             
         padding:10,
         width: "39%",
-        alignItems: 'center',              // Center content horizontally
-        justifyContent: 'center',          // Center content vertically
-        shadowColor: '#2fc5b7',            // Shadow color (optional)
-        shadowOpacity: 0.3,                // Shadow opacity (optional)
-        shadowRadius: 10,                  // Shadow blur radius (optional)
-        shadowOffset: { width: 0, height: 4 }, // Shadow offset (optional)
+        alignItems: 'center', 
+        justifyContent: 'center',
+        shadowColor: '#2fc5b7',
+        shadowOpacity: 0.3,
+        shadowRadius: 10,
+        shadowOffset: { width: 0, height: 4 }, 
         marginTop: 10,
         marginLeft: 10
       },
       buttonText: {
-        color: '#2fc5b7',                 // Text color
-        fontSize: 16,                     // Font size
-        fontWeight: 'bold',               // Font weight
+        color: '#2fc5b7', 
+        fontSize: 16, 
+        fontWeight: 'bold', 
       },
   });
 

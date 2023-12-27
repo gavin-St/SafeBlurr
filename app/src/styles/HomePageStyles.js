@@ -51,40 +51,39 @@ const styles = StyleSheet.create({
     paddingRight: 15,
   },
   videoItem: {
-    width: 400, // Set the width for each video
-    height: 400, // Set the height for each video
-    marginBottom: 15, // Space between each video item
-    borderWidth: 7, // Width of the border
-    borderColor: '#FFFFFF', // Color of the border
-    borderRadius: 10, // Radius of the border corners
+    width: 400,
+    height: 400,
+    marginBottom: 15,
+    borderWidth: 7,
+    borderColor: '#FFFFFF',
+    borderRadius: 10,
   },
   videoImage: {
-    width: '100%', // Use 100% of the parent container's width
-    height: '100%', // Use 100% of the parent container's height
-    // Add other styles as needed
+    width: '100%',
+    height: '100%', 
   },
   button: {
     flexDirection: "row",
-    backgroundColor: 'white',          // White background
-    borderColor: '#2fc5b7',            // Accent border color
-    borderWidth: 2,                    // Border width
-    borderRadius: 10,                  // Rounded corners
+    backgroundColor: 'white',
+    borderColor: '#2fc5b7', 
+    borderWidth: 2, 
+    borderRadius: 10, 
     padding: 10,
     width: "39%",
-    alignItems: 'center',              // Center content horizontally
-    justifyContent: 'center',          // Center content vertically
-    shadowColor: '#2fc5b7',            // Shadow color (optional)
-    shadowOpacity: 0.3,                // Shadow opacity (optional)
-    shadowRadius: 10,                  // Shadow blur radius (optional)
-    shadowOffset: { width: 0, height: 4 }, // Shadow offset (optional)
+    alignItems: 'center', 
+    justifyContent: 'center',
+    shadowColor: '#2fc5b7', 
+    shadowOpacity: 0.3, 
+    shadowRadius: 10, 
+    shadowOffset: { width: 0, height: 4 }, 
     marginTop: 10,
     marginLeft: 10,
     marginBottom: 20,
   },
   buttonText: {
-    color: '#2fc5b7',                 // Text color
-    fontSize: 16,                     // Font size
-    fontWeight: 'bold',               // Font weight
+    color: '#2fc5b7', 
+    fontSize: 16, 
+    fontWeight: 'bold',
   },
 });
 
